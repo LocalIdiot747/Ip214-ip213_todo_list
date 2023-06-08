@@ -4,14 +4,42 @@
 
 # Compiler settings - Can be customized.
 CC = g++
-CXXFLAGS = -std=c++11 -Wall
+CXXFLAGS = -std=c++11 -Wall -Wextra
 LDFLAGS = 
 
 # Makefile settings - Can be customized.
-APPNAME = TODO_LIST
+APPNAME = ToDo_list
 EXT = .cpp
 SRCDIR = C:\Users\kamen\Ip214-ip213_todo_list
-OBJDIR = obj
+OBJDIR = C:\Users\kamen\Ip214-ip213_todo_list\obj
+
+####################### Test ######################
+CXX := g++
+CXXFLAGS := -std=c++11 -Wall -Wextra
+
+TEST_TARGET := tests
+
+.PHONY: all clean_test test
+
+TEST_SRCS := Functions.cpp tests_main.cpp tests.cpp
+TEST_OBJ := $(patsubst %.cpp, %.o, $(TEST_SRCS))
+
+all: $(TEST_TARGET)
+
+$(TEST_TARGET): $(TEST_OBJ)
+	$(CXX) $(CXXFLAGS) $^ -o $@
+
+$(TEST_OBJ): %.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+test: $(TEST_TARGET)
+	./$(TEST_TARGET)
+
+clean_test:
+	rm -f $(TEST_OBJ) $(TEST_TARGET)
+
+.PHONY: test clean_test
+########################################################################
 
 ############## Do not change anything from here downwards! #############
 SRC = $(wildcard $(SRCDIR)/*$(EXT))
@@ -67,3 +95,4 @@ cleanw:
 .PHONY: cleandepw
 cleandepw:
 	$(DEL) $(DEP)
+
