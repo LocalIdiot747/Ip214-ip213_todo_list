@@ -12,7 +12,7 @@ enum CHOICE {
 
 
 
-int main() {
+int ToDo_list() {
 	using std::cout;
 	using std::cin;
 	using std::endl;
@@ -74,5 +74,6 @@ int main() {
 			break;
 
 	}
+	return 0;
 }
 
