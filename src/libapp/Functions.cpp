@@ -1,114 +1,110 @@
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <string>
 
-//showw_menu - выводит меню в консоль 
+// showw_menu - пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 void show_menu() {
-	std::cout << "[1] Add note." << std::endl;
-	std::cout << "[2] Show all notes." << std::endl;
-	std::cout << "[3] Remove one note." << std::endl;
-	std::cout << "[4] Remove all notes." << std::endl;
-	std::cout << "[5] Exit." << std::endl;
+  std::cout << "[1] Add note." << std::endl;
+  std::cout << "[2] Show all notes." << std::endl;
+  std::cout << "[3] Remove one note." << std::endl;
+  std::cout << "[4] Remove all notes." << std::endl;
+  std::cout << "[5] Exit." << std::endl;
 }
 
-//add_note добавить заметку 
-void add_note(const std::string& new_note) {
-	std::ofstream file("notes.txt", std::ios::app);
-	if (!file.is_open()) {
-		std::cout << "[-] File is not opened!";
-		exit(EXIT_FAILURE);
-	}
+// add_note пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+void add_note(const std::string &new_note) {
+  std::ofstream file("notes.txt", std::ios::app);
+  if (!file.is_open()) {
+    std::cout << "[-] File is not opened!";
+    exit(EXIT_FAILURE);
+  }
 
-	file << new_note << std::endl;
+  file << new_note << std::endl;
 
-	file.close();
+  file.close();
 
-	std::cout << "Note added!" << std::endl;
+  std::cout << "Note added!" << std::endl;
 }
 
-// see_all_notes - показать все заметки
+// see_all_notes - пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 void see_all_notes() {
-	std::ifstream file("notes.txt");
+  std::ifstream file("notes.txt");
 
-	if (!file.is_open()) {
-		std::cout << "No notes! Add them!" << std::endl;
-		return;
-	}
+  if (!file.is_open()) {
+    std::cout << "No notes! Add them!" << std::endl;
+    return;
+  }
 
-	std::string one_note;
-	for (int i = 1; !file.eof(); i++) {
-		getline(file, one_note);
-		if (one_note.empty())
-			continue;
-		std::cout << '[' << i << "] " << one_note << std::endl;
-
-	}
-	file.close();
+  std::string one_note;
+  for (int i = 1; !file.eof(); i++) {
+    getline(file, one_note);
+    if (one_note.empty())
+      continue;
+    std::cout << '[' << i << "] " << one_note << std::endl;
+  }
+  file.close();
 }
 
-//удаляет все заметки 
+// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 void remove_all_notes() {
-	std::fstream file("notes.txt", std::ios::out | std::ios::trunc);
-	if (!file.is_open()) {
-		std::cout << "[-] File is not opened!" << std:: endl;
-		exit(EXIT_FAILURE);
-	}
+  std::fstream file("notes.txt", std::ios::out | std::ios::trunc);
+  if (!file.is_open()) {
+    std::cout << "[-] File is not opened!" << std::endl;
+    exit(EXIT_FAILURE);
+  }
 
-	file.close();
-
+  file.close();
 }
 
-//Возвращает указатель на массив всех заметок
-std::string* all_notes(int& n_count) {
-	std::string* all_notes = nullptr;
-	std::string* all_notes_ptr = nullptr;
+// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+std::string *all_notes(int &n_count) {
+  std::string *all_notes = nullptr;
+  std::string *all_notes_ptr = nullptr;
 
-	std::ifstream file("notes.txt");
-	if (!file.is_open()) {
-		std::cout << "File is not opened!";
-		exit(EXIT_FAILURE);
-	}
+  std::ifstream file("notes.txt");
+  if (!file.is_open()) {
+    std::cout << "File is not opened!";
+    exit(EXIT_FAILURE);
+  }
 
-	std::string one_note;
-	int count = 0;
-	while (!file.eof()) {
-		getline(file, one_note);
-		if (one_note.empty())
-			continue;
-		count++;
-		all_notes_ptr = new std::string[count];
+  std::string one_note;
+  int count = 0;
+  while (!file.eof()) {
+    getline(file, one_note);
+    if (one_note.empty())
+      continue;
+    count++;
+    all_notes_ptr = new std::string[count];
 
-		//Копируем уже считаные заметки
-		for (int i = 0; i < count - 1; i++)
-			all_notes_ptr[i] = all_notes[i];
-		//Добавляем еовую заметку
-		all_notes_ptr[count - 1] = one_note;
-		//Очищаем старый массив all_notes
-		delete[] all_notes;
-		//all_notes указывает на новый массив
-		all_notes = all_notes_ptr;
-		all_notes_ptr = nullptr;
-	}
-	file.close();
-	n_count = count;
-	return all_notes;
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    for (int i = 0; i < count - 1; i++)
+      all_notes_ptr[i] = all_notes[i];
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+    all_notes_ptr[count - 1] = one_note;
+    // пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ all_notes
+    delete[] all_notes;
+    // all_notes пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+    all_notes = all_notes_ptr;
+    all_notes_ptr = nullptr;
+  }
+  file.close();
+  n_count = count;
+  return all_notes;
 }
 
-//Удаляет одну заметку под номером choice
-void remove_one_note(std::string* all_notes_arr, int count, int choice) {
-	std::ofstream file("notes.txt");
-	if (!file.is_open()) {
-		std::cout << "[-]Error! File is not open!" << std::endl;
-		exit(EXIT_FAILURE);
-	}
-	//Запись заметок без заметки с индексом choice-1
-	for (int i = 0; i < count; i++) {
-		if (i  == choice - 1)
-			continue;
-		file << all_notes_arr[i] << std::endl;
+// пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ choice
+void remove_one_note(std::string *all_notes_arr, int count, int choice) {
+  std::ofstream file("notes.txt");
+  if (!file.is_open()) {
+    std::cout << "[-]Error! File is not open!" << std::endl;
+    exit(EXIT_FAILURE);
+  }
+  // пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ choice-1
+  for (int i = 0; i < count; i++) {
+    if (i == choice - 1)
+      continue;
+    file << all_notes_arr[i] << std::endl;
+  }
 
-	}
-
-
-	file.close();
+  file.close();
 }
