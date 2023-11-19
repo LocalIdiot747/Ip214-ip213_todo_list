@@ -5,6 +5,7 @@ LIB_NAME = libapp
 CC = g++
 
 CFLAGS = -Wall -Wextra -Werror
+CTEST = -Wall -Wextra
 CFLAGS_TEST = -Isrc -MMD -Ithirdparty
 CPPFLAGS = -I src -MP -MMD
 
@@ -43,16 +44,16 @@ $(LIB_PATH): $(LIB_OBJECTS)
 	ar rcs $@ $^
 
 $(OBJ_DIR)/%.o: %.cpp
-	$(CC) -c $(CFLAGS) $(CFLAGS_TEST) $< -o $@
+	$(CC) -c $(CTEST) $(CFLAGS_TEST) $< -o $@
 
 .PHONY: test
 test: $(TEST_PATH)
 
 $(TEST_PATH): $(TEST_OBJ_PATH)/main.o $(TEST_OBJ_PATH)/test.o $(LIB_PATH)
-	$(CC) $(CFLAGS) $(CFLAGS_TEST) -o $@ $^ -lm
+	$(CC) $(CTEST) $(CFLAGS_TEST) -o $@ $^ -lm
 	
 $(OBJ)/$(TEST_DIR)/%.o: $(TEST_DIR)/main.cpp $(TEST_DIR)/test.cpp $(LIB_OBJECTS)
-	$(CC) $(CFLAGS) $(CFLAGS_TEST) -c -o $@ $< -lm
+	$(CC) $(CTEST) $(CFLAGS_TEST) -c -o $@ $< -lm
 
 .PHONY: clean
 clean:
