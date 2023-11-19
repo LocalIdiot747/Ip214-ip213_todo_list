@@ -3,7 +3,6 @@
 #include <iostream>
 #include <string>
 
-
 enum CHOICE {
   ADD_NOTE = 1,
   SEE_ALL_NOTES = 2,
