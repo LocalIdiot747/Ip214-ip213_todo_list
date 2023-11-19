@@ -1,4 +1,3 @@
-
 name: Build
 
 on: push
@@ -15,6 +14,6 @@ jobs:
 
       - name: Build application
         run: make
-      
-      - name: Build application tests
-        run: make test && ./bin/ToDo_list
+
+      - name: build test
+        run: make test 

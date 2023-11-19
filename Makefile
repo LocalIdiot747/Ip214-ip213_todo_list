@@ -1,97 +1,74 @@
-########################################################################
-####################### Makefile Template ##############################
-########################################################################
+APP_NAME = app
+TEST_NAME = test
+LIB_NAME = libapp
 
-# Compiler settings - Can be customized.
 CC = g++
-CXXFLAGS = -std=c++11 -Wall -Wextra -Werror
-LDFLAGS = 
 
-# Makefile settings - Can be customized.
-APPNAME = ToDo_list
-EXT = .cpp
-SRCDIR = C:\Users\kamen\Ip214-ip213_todo_list
-OBJDIR = C:\Users\kamen\Ip214-ip213_todo_list\obj
+CFLAGS = -Wall -Wextra -Werror
+CFLAGS_TEST = -Isrc -MMD -Ithirdparty
+CPPFLAGS = -I src -MP -MMD
 
-############## Do not change anything from here downwards! #############
-SRC = $(wildcard $(SRCDIR)/*$(EXT))
-OBJ = $(SRC:$(SRCDIR)/%$(EXT)=$(OBJDIR)/%.o)
-DEP = $(OBJ:$(OBJDIR)/%.o=%.d)
-# UNIX-based OS variables & settings
-RM = rm
-DELOBJ = $(OBJ)
-# Windows OS variables & settings
-DEL = del
-EXE = .exe
-WDELOBJ = $(SRC:$(SRCDIR)/%$(EXT)=$(OBJDIR)\\%.o)
+BIN_DIR = bin
+OBJ_DIR = obj
+SRC_DIR = src
+TEST_DIR = test
 
-########################################################################
-####################### Targets beginning here #########################
-########################################################################
 
-all: $(APPNAME)
+APP_PATH = $(BIN_DIR)/$(APP_NAME)
+LIB_PATH = $(OBJ_DIR)/$(SRC_DIR)/$(LIB_NAME)/$(LIB_NAME).a
+TEST_PATH = $(BIN_DIR)/$(TEST_NAME)
+TEST_OBJ_PATH = $(OBJ_DIR)/$(TEST_DIR)
 
-# Builds the app
-$(APPNAME): $(OBJ)
-	$(CC) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
+SRC_EXT = cpp
+APP_RUN = $(BIN_DIR)/./$(APP_NAME)
+TEST_CHECK = $(BIN_DIR)/./$(TEST_NAME)
 
-# Creates the dependecy rules
-%.d: $(SRCDIR)/%$(EXT)
-	@$(CPP) $(CFLAGS) $< -MM -MT $(@:%.d=$(OBJDIR)/%.o) >$@
+APP_SOURCES = $(shell find $(SRC_DIR)/$(APP_NAME) -name '*.$(SRC_EXT)')
+APP_OBJECTS = $(APP_SOURCES:$(SRC_DIR)/%.$(SRC_EXT)=$(OBJ_DIR)/$(SRC_DIR)/%.o)
 
-# Includes all .h files
--include $(DEP)
+LIB_SOURCES = $(shell find $(SRC_DIR)/$(LIB_NAME) -name '*.$(SRC_EXT)')
+LIB_OBJECTS = $(LIB_SOURCES:$(SRC_DIR)/%.$(SRC_EXT)=$(OBJ_DIR)/$(SRC_DIR)/%.o)
 
-# Building rule for .o files and its .c/.cpp in combination with all .h
-$(OBJDIR)/%.o: $(SRCDIR)/%$(EXT)
-	$(CC) $(CXXFLAGS) -o $@ -c $<
+DEPS = $(APP_OBJECTS:.o=.d) $(LIB_OBJECTS:.o=.d) 
 
-################### Cleaning rules for Unix-based OS ###################
-# Cleans complete project
+.PHONY: all
+all: $(APP_PATH)
+
+-include $(DEPS)
+
+$(APP_PATH): $(APP_OBJECTS) $(LIB_PATH)
+	$(CC) $(CFLAGS) $(CPPFLAGS) $^ -o $@ $(LDFLAGS) $(LDLIBS)
+
+$(LIB_PATH): $(LIB_OBJECTS)
+	ar rcs $@ $^
+
+$(OBJ_DIR)/%.o: %.cpp
+	$(CC) -c $(CFLAGS) $(CFLAGS_TEST) $< -o $@
+
+.PHONY: test
+test: $(TEST_PATH)
+
+$(TEST_PATH): $(TEST_OBJ_PATH)/main.o $(TEST_OBJ_PATH)/test.o $(LIB_PATH)
+	$(CC) $(CFLAGS) $(CFLAGS_TEST) -o $@ $^ -lm
+	
+$(OBJ)/$(TEST_DIR)/%.o: $(TEST_DIR)/main.cpp $(TEST_DIR)/test.cpp $(LIB_OBJECTS)
+	$(CC) $(CFLAGS) $(CFLAGS_TEST) -c -o $@ $< -lm
+
 .PHONY: clean
 clean:
-	$(RM) $(DELOBJ) $(DEP) $(APPNAME)
+	rm -f $(APP_PATH) $(TEST_PATH) $(LIB_PATH) 
+	rm -rf $(DEPS) $(APP_OBJECTS) $(LIB_OBJECTS)
+	rm -rf $(TEST_OBJ_PATH)/*.*
+	
+.PHONY: run
+run: $(APP_RUN)
+	$(APP_RUN) $(ARGS)
 
-# Cleans only all files with the extension .d
-.PHONY: cleandep
-cleandep:
-	$(RM) $(DEP)
+.PHONY: rtest
+rtest: $(TEST_CHECK)
+	$(TEST_CHECK) 
 
-#################### Cleaning rules for Windows OS #####################
-# Cleans complete project
-.PHONY: cleanw
-cleanw:
-	$(DEL) $(WDELOBJ) $(DEP) $(APPNAME)$(EXE)
+$(eval ARGS := $(filter-out $@,$(MAKECMDGOALS)))
 
-# Cleans only all files with the extension .d
-.PHONY: cleandepw
-cleandepw:
-	$(DEL) $(DEP)
-
-####################### Test ######################
-CXX := g++
-CXXFLAGS = -std=c++11 -Wall -Wextra
-
-TEST_TARGET := tests
-
-.PHONY: all clean_test test
-
-TEST_SRCS := Functions.cpp tests_main.cpp tests.cpp
-TEST_OBJ := $(patsubst %.cpp, %.o, $(TEST_SRCS))
-
-all: $(TEST_TARGET)
-
-$(TEST_TARGET): $(TEST_OBJ)
-	$(CXX) $(CXXFLAGS) $^ -o $@
-
-$(TEST_OBJ): %.o: %.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-test: $(TEST_TARGET)
-	./$(TEST_TARGET)
-
-clean_test:
-	rm -f $(TEST_OBJ) $(TEST_TARGET)
-
-.PHONY: test clean_test
-########################################################################
+%:
+    @:

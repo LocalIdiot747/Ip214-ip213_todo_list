@@ -4,9 +4,10 @@
 #include <sstream>
 
 #include "ctest.h"
-#include "Functions.h"
+#include "libapp/Functions.h"
 
-CTEST(todo_list, test_add_note) {
+CTEST(todo_list, test_add_note)
+{
     const std::string new_note = "New note";
 
     add_note(new_note);
@@ -14,8 +15,10 @@ CTEST(todo_list, test_add_note) {
     std::ifstream file("notes.txt");
     std::string line;
     bool found = false;
-    while (std::getline(file, line)) {
-        if (line == new_note) {
+    while (std::getline(file, line))
+    {
+        if (line == new_note)
+        {
             found = true;
             break;
         }
@@ -25,7 +28,8 @@ CTEST(todo_list, test_add_note) {
     ASSERT_TRUE(found);
 }
 
-CTEST(TodoListTest, RemoveAllNotes) {
+CTEST(TodoListTest, RemoveAllNotes)
+{
     remove_all_notes();
     std::ifstream file("notes.txt");
 
@@ -35,10 +39,9 @@ CTEST(TodoListTest, RemoveAllNotes) {
     ASSERT_TRUE(is_empty);
 }
 
-
-
-CTEST(todo_list, test_remove_one_note) {
-    std::string* all_notes_array;
+CTEST(todo_list, test_remove_one_note)
+{
+    std::string *all_notes_array;
     int count;
     all_notes_array = all_notes(count);
 
@@ -47,8 +50,10 @@ CTEST(todo_list, test_remove_one_note) {
     std::ifstream file("notes.txt");
     std::string line;
     bool found = false;
-    while (std::getline(file, line)) {
-        if (line == "Note 2") {
+    while (std::getline(file, line))
+    {
+        if (line == "Note 2")
+        {
             found = true;
             break;
         }
